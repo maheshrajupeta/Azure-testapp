@@ -1,486 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Employee Management</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
             background: #f4f6f8;
-            color: #333;
         }
 
-        .header {
-            background: #1f4e79;
+        header {
+            background: #0078d4;
             color: white;
-            padding: 20px 40px;
-        }
-
-        .header h1 {
-            margin: 0;
-        }
-
-        .header p {
-            margin: 5px 0 0;
+            padding: 20px;
+            text-align: center;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 30px auto;
-            padding: 0 20px;
+            padding: 20px;
         }
 
         .card {
             background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
-
-        .stats {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .stat {
-            flex: 1;
-            background: white;
             padding: 20px;
-            border-radius: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .stat h3 {
-            margin: 0;
-            font-size: 16px;
-            color: #777;
-        }
-
-        .stat p {
-            margin: 10px 0 0;
-            font-size: 30px;
-            font-weight: bold;
-            color: #1f4e79;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background: #1f4e79;
-            color: white;
-            font-size: 14px;
-        }
-
-        button:hover {
-            background: #163a5c;
-        }
-
-        .delete-btn {
-            background: #d9534f;
-            padding: 8px 12px;
-        }
-
-        .delete-btn:hover {
-            background: #b52b27;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
         }
 
-        th,
-        td {
-            padding: 14px;
-            text-align: left;
+        th, td {
+            padding: 12px;
             border-bottom: 1px solid #ddd;
+            text-align: left;
         }
 
         th {
-            background: #f0f3f6;
+            background: #f1f1f1;
         }
 
-        .status {
-            margin-top: 15px;
-            padding: 10px;
+        button {
+            padding: 10px 15px;
+            border: none;
             border-radius: 5px;
-            display: none;
+            cursor: pointer;
+            background: #0078d4;
+            color: white;
         }
 
-        .success {
-            background: #dff0d8;
-            color: #3c763d;
+        button:hover {
+            opacity: 0.9;
         }
 
-        .error {
-            background: #f2dede;
-            color: #a94442;
-        }
-
-        @media (max-width: 700px) {
-            .stats,
-            .form-row {
-                flex-direction: column;
-            }
+        .health {
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="header">
-        <h1>Employee Management</h1>
-        <p>ASP.NET Core 8 + Azure App Service + GitHub Actions</p>
+<header>
+    <h1>Employee Management System</h1>
+    <p>Azure App Service + .NET</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Application Status</h2>
+        <p class="health" id="health">Checking...</p>
     </div>
 
-    <div class="container">
+    <div class="card">
+        <h2>Employees</h2>
 
-        <div class="stats">
+        <button onclick="loadEmployees()">
+            Refresh Employees
+        </button>
 
-            <div class="stat">
-                <h3>Total Employees</h3>
-                <p id="employeeCount">0</p>
-            </div>
+        <br><br>
 
-            <div class="stat">
-                <h3>Application Status</h3>
-                <p id="appStatus">Checking...</p>
-            </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                </tr>
+            </thead>
 
-        </div>
-
-        <div class="card">
-
-            <h2>Add Employee</h2>
-
-            <div class="form-row">
-
-                <input
-                    type="text"
-                    id="name"
-                    placeholder="Employee Name"
-                >
-
-                <input
-                    type="text"
-                    id="role"
-                    placeholder="Role"
-                >
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Email"
-                >
-
-                <button onclick="addEmployee()">
-                    Add Employee
-                </button>
-
-            </div>
-
-            <div id="message" class="status"></div>
-
-        </div>
-
-        <div class="card">
-
-            <h2>Employee List</h2>
-
-            <button onclick="loadEmployees()">
-                Refresh
-            </button>
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Email</th>
-                        <th>Action</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="employeeTable">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
+            <tbody id="employeeTable">
+            </tbody>
+        </table>
     </div>
 
-    <script>
+</div>
 
-        async function loadEmployees() {
+<script>
 
-            try {
+async function checkHealth() {
 
-                const response =
-                    await fetch('/api/employees');
+    try {
 
-                if (!response.ok) {
-                    throw new Error("Failed to load employees");
-                }
+        const response = await fetch('/health');
 
-                const employees =
-                    await response.json();
+        const result = await response.text();
 
-                const table =
-                    document.getElementById("employeeTable");
+        document.getElementById('health').innerText = result;
 
-                table.innerHTML = "";
+    } catch (error) {
 
-                employees.forEach(employee => {
+        document.getElementById('health').innerText =
+            'Application is not responding';
 
-                    const row =
-                        document.createElement("tr");
+    }
+}
 
-                    row.innerHTML = `
-                        <td>${employee.id}</td>
-                        <td>${employee.name}</td>
-                        <td>${employee.role}</td>
-                        <td>${employee.email}</td>
-                        <td>
-                            <button
-                                class="delete-btn"
-                                onclick="deleteEmployee(${employee.id})">
-                                Delete
-                            </button>
-                        </td>
-                    `;
 
-                    table.appendChild(row);
+async function loadEmployees() {
 
-                });
+    try {
 
-                document.getElementById("employeeCount")
-                    .innerText = employees.length;
+        const response = await fetch('/api/employees');
 
-            }
-            catch (error) {
+        const employees = await response.json();
 
-                showMessage(
-                    "Unable to load employees",
-                    false
-                );
+        const table = document.getElementById('employeeTable');
 
-                console.error(error);
+        table.innerHTML = '';
 
-            }
+        employees.forEach(employee => {
 
-        }
+            const row = `
+                <tr>
+                    <td>${employee.id}</td>
+                    <td>${employee.name}</td>
+                    <td>${employee.department}</td>
+                </tr>
+            `;
 
+            table.innerHTML += row;
 
-        async function checkHealth() {
+        });
 
-            try {
+    } catch (error) {
 
-                const response =
-                    await fetch('/health');
+        console.error(error);
 
-                if (response.ok) {
+    }
+}
 
-                    document.getElementById("appStatus")
-                        .innerText = "Healthy";
 
-                }
-                else {
+checkHealth();
 
-                    document.getElementById("appStatus")
-                        .innerText = "Error";
+loadEmployees();
 
-                }
-
-            }
-            catch {
-
-                document.getElementById("appStatus")
-                    .innerText = "Offline";
-
-            }
-
-        }
-
-
-        async function addEmployee() {
-
-            const name =
-                document.getElementById("name").value;
-
-            const role =
-                document.getElementById("role").value;
-
-            const email =
-                document.getElementById("email").value;
-
-            if (!name || !role || !email) {
-
-                showMessage(
-                    "Please enter all employee details",
-                    false
-                );
-
-                return;
-            }
-
-            const employee = {
-
-                id: Date.now(),
-
-                name: name,
-
-                role: role,
-
-                email: email
-
-            };
-
-            try {
-
-                const response =
-                    await fetch('/api/employees', {
-
-                        method: 'POST',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json'
-                        },
-
-                        body:
-                            JSON.stringify(employee)
-
-                    });
-
-                if (response.ok) {
-
-                    showMessage(
-                        "Employee added successfully",
-                        true
-                    );
-
-                    document.getElementById("name")
-                        .value = "";
-
-                    document.getElementById("role")
-                        .value = "";
-
-                    document.getElementById("email")
-                        .value = "";
-
-                }
-
-            }
-            catch (error) {
-
-                showMessage(
-                    "Failed to add employee",
-                    false
-                );
-
-            }
-
-        }
-
-
-        async function deleteEmployee(id) {
-
-            try {
-
-                const response =
-                    await fetch(
-                        `/api/employees/${id}`,
-                        {
-                            method: 'DELETE'
-                        }
-                    );
-
-                if (response.ok) {
-
-                    showMessage(
-                        `Employee ${id} deleted`,
-                        true
-                    );
-
-                }
-
-            }
-            catch {
-
-                showMessage(
-                    "Delete operation failed",
-                    false
-                );
-
-            }
-
-        }
-
-
-        function showMessage(message, success) {
-
-            const element =
-                document.getElementById("message");
-
-            element.innerText = message;
-
-            element.className =
-                success
-                    ? "status success"
-                    : "status error";
-
-            element.style.display = "block";
-
-            setTimeout(() => {
-
-                element.style.display = "none";
-
-            }, 3000);
-
-        }
-
-
-        // Load data when page opens
-        loadEmployees();
-
-        checkHealth();
-
-    </script>
+</script>
 
 </body>
-
 </html>
