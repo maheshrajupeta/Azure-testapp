@@ -9,7 +9,7 @@ on:
 
 env:
   DOTNET_VERSION: '8.0.x'
-  AZURE_WEBAPP_NAME: 'YOUR-AZURE-APP-NAME'
+  AZURE_WEBAPP_NAME: 'Test-3'
 
 jobs:
 
