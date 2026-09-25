@@ -1,6 +1,7 @@
-name: Build and Deploy .NET 8 API to Azure
+name: Build and Deploy .NET 8 Application
 
 on:
+
   push:
     branches:
       - main
@@ -8,8 +9,10 @@ on:
   workflow_dispatch:
 
 env:
+
   DOTNET_VERSION: '8.0.x'
-  AZURE_WEBAPP_NAME: 'Test-3'
+
+  AZURE_WEBAPP_NAME: 'test-3-hnhtc0cphkfdb5a6'
 
 jobs:
 
@@ -19,34 +22,29 @@ jobs:
 
     steps:
 
-      # 1. Checkout GitHub repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Install .NET
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      # 3. Restore NuGet packages
-      - name: Restore
+      - name: Restore Dependencies
         run: dotnet restore
 
-      # 4. Build application
-      - name: Build
+      - name: Build Application
         run: dotnet build --configuration Release --no-restore
 
-      # 5. Publish application
-      - name: Publish
+      - name: Publish Application
         run: dotnet publish --configuration Release --output ./publish
 
-      # 6. Upload published application
-      - name: Upload Artifact
+      - name: Upload Application
         uses: actions/upload-artifact@v4
         with:
           name: dotnet-app
           path: ./publish
+
 
   deploy:
 
@@ -56,14 +54,12 @@ jobs:
 
     steps:
 
-      # Download published application
-      - name: Download Artifact
+      - name: Download Application
         uses: actions/download-artifact@v4
         with:
           name: dotnet-app
           path: ./publish
 
-      # Login to Azure
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -71,8 +67,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # Deploy to Azure App Service
-      - name: Deploy to Azure
+      - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
