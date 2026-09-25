@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - Test-3
+name: Build and deploy ASP.Net Core app to Azure Web App - test-3
 
 on:
   push:
@@ -48,19 +48,18 @@ jobs:
         with:
           name: .net-app
       
-      # Login to Azure
-      - name: Azure Login
+      - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E96A2926F35F45D2856D394B7BBE0CC2 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E59744B4ABC4432CA6BBCF628E2B5B30 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_403ECA8B3E7D4F828113D5FB02839340 }}
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Test-3'
+          app-name: 'test-3'
           slot-name: 'Production'
           package: .
           
