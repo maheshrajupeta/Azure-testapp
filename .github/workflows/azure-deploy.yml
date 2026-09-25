@@ -1,4 +1,4 @@
-name: Build and Deploy .NET 8 Application
+name: Build and Deploy .NET 11 Application
 
 on:
   push:
@@ -7,11 +7,10 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: '11.0.x'
   AZURE_WEBAPP_NAME: 'test-3-hnhtc0cphkfdb5a6'
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
@@ -19,10 +18,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup .NET 8
+      - name: Setup .NET 11
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: '11.0.x'
+
+      - name: Verify .NET Version
+        run: dotnet --version
 
       - name: Restore Dependencies
         run: dotnet restore
@@ -31,12 +33,14 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish Application
-        run: dotnet publish --configuration Release --output ./publish
+        run: dotnet publish --configuration Release --no-restore --output ./publish
 
       - name: Check Published Files
         run: |
-          echo "Published files:"
-          find ./publish -maxdepth 3 -type f
+          echo "========== PUBLISHED FILES =========="
+          find ./publish -type f
+          echo "========== WWWROOT =========="
+          find ./publish/wwwroot -type f || true
 
       - name: Upload Application
         uses: actions/upload-artifact@v4
@@ -54,6 +58,11 @@ jobs:
         with:
           name: dotnet-app
           path: ./publish
+
+      - name: Show Deployment Files
+        run: |
+          echo "========== DEPLOYMENT FILES =========="
+          find ./publish -type f
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
