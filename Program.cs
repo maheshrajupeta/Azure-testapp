@@ -1,10 +1,13 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Enable default files and static files
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 // Swagger
 if (app.Environment.IsDevelopment())
@@ -12,19 +15,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-// HTTPS
-app.UseHttpsRedirection();
-
-// Home endpoint
-app.MapGet("/", () =>
-{
-    return Results.Ok(new
-    {
-        message = "Azure .NET API is running successfully!",
-        environment = "Azure App Service"
-    });
-});
 
 // Health check
 app.MapGet("/health", () =>
@@ -41,9 +31,9 @@ app.MapGet("/api/employees", () =>
 {
     var employees = new[]
     {
-        new Employee(1, "Mahesh", "Developer"),
-        new Employee(2, "Ravi", "Tester"),
-        new Employee(3, "Suresh", "DevOps Engineer")
+        new Employee(1, "Mahesh", "Developer", "mahesh@example.com"),
+        new Employee(2, "Ravi", "Tester", "ravi@example.com"),
+        new Employee(3, "Suresh", "DevOps Engineer", "suresh@example.com")
     };
 
     return Results.Ok(employees);
@@ -55,7 +45,8 @@ app.MapGet("/api/employees/{id:int}", (int id) =>
     var employee = new Employee(
         id,
         "Mahesh",
-        "Developer"
+        "Developer",
+        "mahesh@example.com"
     );
 
     return Results.Ok(employee);
@@ -70,10 +61,20 @@ app.MapPost("/api/employees", (Employee employee) =>
     );
 });
 
+// Delete employee
+app.MapDelete("/api/employees/{id:int}", (int id) =>
+{
+    return Results.Ok(new
+    {
+        message = $"Employee {id} deleted successfully"
+    });
+});
+
 app.Run();
 
 public record Employee(
     int Id,
     string Name,
-    string Role
+    string Role,
+    string Email
 );
