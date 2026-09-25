@@ -70,6 +70,30 @@ app.MapDelete("/api/employees/{id:int}", (int id) =>
     });
 });
 
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
+
+var app = builder.Build();
+
+// Serve wwwroot/index.html
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+// API
+app.MapGet("/api/employees", () =>
+{
+    return new[]
+    {
+        new { Id = 1, Name = "John", Department = "IT" },
+        new { Id = 2, Name = "Mary", Department = "HR" },
+        new { Id = 3, Name = "David", Department = "Finance" }
+    };
+});
+
+app.MapGet("/health", () => "Application is healthy");
+
+
 app.Run();
 
 public record Employee(
